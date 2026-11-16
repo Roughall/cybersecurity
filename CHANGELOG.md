@@ -36,3 +36,12 @@
 - OpenJDK 25.0.5-ea tidak sesuai spesifikasi OpenJDK 17 BellSoft Liberica pada template.
 - Apache Ant tidak ditemukan dan NetBeans tidak ditemukan di PATH.
 - Menegaskan baseline workstation bukan hasil scan dependency dan belum membuktikan kontrol 1.10 PASS/NOT PASS.
+
+
+## 2026-11-16 — Point 1.10: distribusi SIMRS, static review, dan persiapan SCA
+- Memperbarui CHECKPOINT.md dan AGENT_HANDOFF.md dengan hasil pemeriksaan paket distribusi SIMRS lokal.
+- Mencatat inventaris awal 867 JAR, metadata manifest, hash, dan hasil jdeps.
+- Mencatat referensi SIMRSKhanza.jar ke MySQL Connector/J 5.1.47 dan potential finding yang menunggu validasi advisory/CVE.
+- Memperbarui laporan status agar membedakan hasil review repository dokumentasi dari pemeriksaan paket distribusi lokal.
+- Mencatat batasan: source review dan runtime verification belum dilakukan; OSV-Scanner, OWASP Dependency-Check, dan CycloneDX CLI belum terpasang.
+- Tidak mengunggah paket JAR proprietary atau eviden mentah/sensitif ke repository.
