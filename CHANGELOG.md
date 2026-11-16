@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-16 — Google Drive evidence-storage workflow
+- Memperbarui CHECKPOINT.md: Google Drive ditetapkan sebagai rancangan pusat penyimpanan screenshot, error, log, dan eviden; GitHub tetap menjadi pusat dokumentasi assessment.
+- Mendokumentasikan alur Kali Linux → sanitasi → Drive → review AI berizin → pencatatan hasil di GitHub.
+- Menegaskan bahwa GitHub tidak otomatis mengarahkan ChatGPT/Claude/AI lain ke Drive; konektor dan izin harus dikonfigurasi secara terpisah.
+- Mencatat bahwa jenis akun Drive, persetujuan kebijakan institusi, konektor AI, struktur folder, dan otomasi belum dikonfirmasi atau diimplementasikan.
+- Menetapkan prinsip akses minimum dan sanitasi data sensitif sebelum eviden dibagikan.
+
+
 ## 2026-11-16 — Workflow checkpoint and multi-agent planning
 - Memperbarui CHECKPOINT.md: assessment diprioritaskan untuk tenggat 2026-11-16.
 - Menetapkan Diagnostic & Evidence Collector sebagai modul pendukung dalam repository yang sama; implementasi penuh ditunda agar tidak menghambat assessment.
