@@ -1,0 +1,49 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa
+id_ed25519
+secrets/
+credentials/
+
+# Sensitive data and raw exports
+*.sql
+*.sql.gz
+*.dump
+*.bak
+*.backup
+*.pcap
+*.pcapng
+patient-data/
+production-data/
+raw-logs/
+evidence/raw/
+reports/raw/
+
+# Local environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.cache/
+node_modules/
+build/
+dist/
+.tmp/
+temp/
+.nmap/
+.scan-output/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
