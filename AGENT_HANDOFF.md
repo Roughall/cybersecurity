@@ -76,5 +76,11 @@ Metadata: Evidence ID, kontrol, waktu/zona waktu, tool dan versi, target alias/c
 - Temuan, rekomendasi, keterbatasan, pertanyaan terbuka.
 - Handoff untuk agent berikutnya.
 
-## Sesi pertama
-Hanya lakukan discovery lokal non-intrusif: versi Kali Linux, kernel, arsitektur, dan ketersediaan tools. Jangan scan jaringan/host target. Laporkan command dan output aktual, tanpa mengarang.
+## Prioritas tindak lanjut assessment
+1. Minta manifest dependency/SBOM atau daftar library dan versi dari vendor/pengelola SIMRS untuk kontrol 1.10.
+2. Lakukan pencocokan CVE/advisory berdasarkan versi dan kondisi aktual; simpan output tersanitasi.
+3. Kumpulkan eviden kontrol 1.1–1.9 dan 2.1–2.5 dari PIC aplikasi/server. Pemeriksaan teknis terfokus pada 1.10 tidak membuktikan kontrol lain.
+4. Jangan menyatakan PASS hanya dari ketiadaan file/temuan.
+
+## Sesi workstation
+Discovery Kali Linux tetap non-intrusif. Catat versi OS, kernel, arsitektur, dan tools aktual; jangan scan target tanpa otorisasi.
