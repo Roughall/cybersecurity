@@ -1,0 +1,99 @@
+# Security Self-Assessment SIM Faskes — Status & Evidence Register
+
+**Tanggal:** 16 November 2026  
+**Acuan:** SPPTI-SEC-FORM-001 versi 1.1  
+**Repository dokumentasi:** `Roughall/cybersecurity`  
+**Workstation yang dinyatakan:** Kali Linux (versi belum diverifikasi)  
+**Jenis dokumen:** Laporan status assessment dan gap eviden — bukan sertifikasi keamanan atau hasil PASS final.
+
+## 1. Ringkasan eksekutif
+
+Atas arahan pengguna, pemeriksaan teknis difokuskan pada kontrol **1.10 — tidak menggunakan library yang vulnerable**. Pada saat yang sama, register bukti disusun untuk seluruh 15 kontrol pada formulir agar kekurangan bukti dapat disampaikan secara transparan.
+
+Repository yang diperiksa merupakan repository dokumentasi assessment, bukan source code SIMRS. Pencarian repository untuk manifest dependency umum (`package.json`, `pom.xml`, `build.gradle`, `composer.json`, `requirements.txt`, `go.mod`, `Cargo.toml`) tidak menemukan hasil. Tidak ditemukan SBOM, daftar dependency beserta versi, atau source bundle aplikasi target dalam bahan repository yang diperiksa.
+
+**Kesimpulan:** kontrol 1.10 belum dapat diverifikasi karena komponen dan versinya tidak tersedia untuk pencocokan CVE/advisory. Empat belas kontrol lainnya juga belum dapat dinilai dari repository dokumentasi ini. Tidak ada kontrol yang dinyatakan PASS atau NOT PASS. Dokumen ini layak digunakan sebagai laporan status/gap untuk diserahkan hari ini, tetapi tidak boleh dipresentasikan sebagai bukti bahwa assessment teknis 15 kontrol telah selesai.
+
+## 2. Ruang lingkup dan metode
+
+- Review repository GitHub `Roughall/cybersecurity` pada branch `main`.
+- Review checkpoint, scope, handoff, README, dan changelog.
+- Pencarian file/artefak dependency untuk nama manifest umum.
+- Tidak dilakukan pemindaian terhadap host/server, pengujian aplikasi, pengujian login, atau perubahan konfigurasi.
+- Tidak ada output scanner dependency atau hasil pencocokan CVE yang tersedia pada repository saat review.
+
+## 3. Register hasil 15 kontrol
+
+| ID | Aspek pemeriksaan | Bukti yang tersedia saat review | Status |
+|---|---|---|---|
+| 1.1 | XSS pada setiap form input | Tidak ada source code/form test evidence di repository dokumentasi | BELUM DIVERIFIKASI |
+| 1.2 | SQL Injection pada setiap form input | Tidak ada source code/query review atau hasil uji | BELUM DIVERIFIKASI |
+| 1.3 | Pembatasan percobaan login | Tidak ada konfigurasi atau hasil uji autentikasi | BELUM DIVERIFIKASI |
+| 1.4 | Lockout temporer setelah 3 kali gagal | Tidak ada konfigurasi atau hasil uji akun uji | BELUM DIVERIFIKASI |
+| 1.5 | Warning “Gagal Login” | Tidak ada screenshot uji login | BELUM DIVERIFIKASI |
+| 1.6 | Pesan gagal login tidak membedakan username/password | Tidak ada perbandingan respons akun uji | BELUM DIVERIFIKASI |
+| 1.7 | Kompleksitas password | Tidak ada kebijakan atau hasil uji password | BELUM DIVERIFIKASI |
+| 1.8 | Akses menu sesuai kewenangan | Tidak ada matriks role/permission atau hasil uji | BELUM DIVERIFIKASI |
+| 1.9 | Broken Access Control / akses data antar-user | Tidak ada hasil uji otorisasi atau bukti kepemilikan data | BELUM DIVERIFIKASI |
+| 1.10 | Tidak menggunakan library vulnerable | Manifest/SBOM/dependency dan versi tidak ditemukan; CVE matching belum dapat dilakukan | BELUM DIVERIFIKASI |
+| 2.1 | Antivirus server | Tidak ada output/status antivirus server | BELUM DIVERIFIKASI |
+| 2.2 | Firewall dan inbound rules | Tidak ada ruleset atau bukti listener server | BELUM DIVERIFIKASI |
+| 2.3 | TLS minimal 1.2 | Tidak ada konfigurasi atau hasil uji TLS endpoint | BELUM DIVERIFIKASI |
+| 2.4 | Keamanan versi webserver | Tidak ada identitas versi/build webserver | BELUM DIVERIFIKASI |
+| 2.5 | Keamanan framework/bahasa pemrograman | Tidak ada inventaris runtime/framework dan versi target | BELUM DIVERIFIKASI |
+
+## 4. Pemeriksaan khusus kontrol 1.10
+
+### Kriteria
+Memastikan library yang digunakan tidak memiliki kerentanan keamanan yang diketahui, misalnya Bootstrap, jQuery, dan komponen sejenis, sesuai butir 1.10 pada formulir.
+
+### Hasil review repository
+Pencarian dilakukan untuk nama manifest dependency berikut:
+- `package.json`
+- `pom.xml`
+- `build.gradle`
+- `composer.json`
+- `requirements.txt`
+- `go.mod`
+- `Cargo.toml`
+
+Tidak ada hasil file yang cocok dari pencarian repository. Repository yang tersedia berisi dokumentasi assessment dan bukan source code aplikasi SIMRS. Karena itu, belum ada daftar nama library, versi, dependency transitif, atau SBOM yang dapat dianalisis.
+
+### Penilaian
+**BELUM DIVERIFIKASI.** Ketiadaan manifest pada repository dokumentasi bukan bukti bahwa aplikasi tidak menggunakan library vulnerable. Tanpa daftar komponen dan versi aktual, pencocokan CVE/NVD tidak dapat menghasilkan kesimpulan yang dapat dipertanggungjawabkan.
+
+### Eviden yang dibutuhkan
+1. SBOM (CycloneDX atau SPDX) dari build aplikasi yang sesuai versi target; atau
+2. manifest dan lockfile dependency yang digunakan untuk membangun versi aplikasi target; atau
+3. daftar library, versi, sumber, dan komponen transitif yang dikonfirmasi vendor/pengelola SIMRS.
+
+Setelah diterima, lakukan pencocokan terhadap advisory vendor dan basis data CVE/NVD, periksa rentang versi terdampak, status patch/backport, serta validasi false positive. Simpan hasil scanner dan ringkasan validasi sebagai eviden tersanitasi.
+
+## 5. Gap dan permintaan data untuk menuntaskan assessment
+
+| Prioritas | Data/eviden yang diminta | PIC/sumber yang disarankan |
+|---|---|---|
+| Tinggi — 1.10 | SBOM atau manifest/lockfile dan versi build SIMRS target | Vendor/pengelola SIMRS |
+| Tinggi — 1.1–1.9 | Source review yang disetujui, screenshot, kebijakan, matriks role, akun uji, hasil uji staging | PIC SIMRS/vendor |
+| Tinggi — 2.1–2.5 | Bukti antivirus, firewall, TLS, webserver, runtime/framework dari server | Administrator server/Diskominfotik |
+| Administratif | Identitas versi target, lingkungan, tanggal, otorisasi, reviewer | PIC assessment dan pemilik sistem |
+
+Jangan mengirim data pasien, kredensial, token, private key, cookie/session, dump database, atau konfigurasi rahasia. Simpan eviden mentah pada media institusi yang disetujui; unggah hanya salinan yang sudah disanitasi.
+
+## 6. Pernyataan keterbatasan
+
+- Review ini terbatas pada repository dokumentasi yang tersedia.
+- Kali Linux disebut sebagai workstation, tetapi versi OS, kernel, arsitektur, dan inventaris tools belum diberikan sebagai output eviden.
+- Tidak ada akses atau bukti langsung dari aplikasi dan server produksi yang ditinjau.
+- Pencarian manifest yang tidak menghasilkan temuan tidak membuktikan ketiadaan dependency.
+- Tidak ada pengujian dinamis atau pemindaian jaringan dilakukan.
+- Status checklist resmi harus diputuskan oleh PIC yang berwenang setelah bukti lengkap ditinjau.
+
+## 7. Kesimpulan untuk penyerahan
+
+Pada tanggal laporan, assessment belum dapat dinyatakan selesai secara teknis untuk 15 kontrol. Pemeriksaan terfokus pada kontrol 1.10 telah dilakukan pada repository dokumentasi, tetapi hasilnya **BELUM DIVERIFIKASI** karena artefak dependency aplikasi target belum tersedia. Seluruh kontrol lainnya juga berstatus **BELUM DIVERIFIKASI** karena eviden teknis belum tersedia pada repository.
+
+Dokumen ini dapat diserahkan sebagai **laporan status pemeriksaan dan daftar kekurangan eviden**, bukan sebagai pernyataan bahwa sistem telah memenuhi seluruh persyaratan keamanan. Assessment final memerlukan data dan eviden dari vendor/pengelola SIMRS serta administrator server yang berwenang.
+
+---
+*Disusun sebagai dokumentasi teknis internal. Kesimpulan final dan pengisian checklist resmi memerlukan review serta persetujuan PIC yang berwenang.*
