@@ -45,3 +45,14 @@
 - Memperbarui laporan status agar membedakan hasil review repository dokumentasi dari pemeriksaan paket distribusi lokal.
 - Mencatat batasan: source review dan runtime verification belum dilakukan; OSV-Scanner, OWASP Dependency-Check, dan CycloneDX CLI belum terpasang.
 - Tidak mengunggah paket JAR proprietary atau eviden mentah/sensitif ke repository.
+
+
+## 2026-11-16 — Point 1.10 full SBOM, OSV scan, dan pemetaan lokasi
+- Memperbarui CHECKPOINT.md dan AGENT_HANDOFF.md dengan hasil SCA pada distribusi SIMRS lokal.
+- Mencatat Syft full distribution SBOM: 2.044 komponen; OSV memproses 1.037 paket dan memfilter 77 paket lokal/unscannable.
+- Mencatat 163 rekaman vulnerability pada 44 paket/versi dan 131 CVE unik; membedakan rekaman dari CVE unik.
+- Mencatat pemetaan lokasi JAR v2 berhasil 163/163 setelah membaca identitas Maven dari PURL; 0 belum terpetakan.
+- Mencatat inventaris aset web di luar JAR dan 1.072 entri aset web di dalam JAR, dengan batasan bahwa entri tersebut mencakup dokumentasi/contoh/duplikasi dan bukan library runtime unik.
+- Mencatat bahwa Dependency-Check 13.0.0 terpasang tetapi NVD update menunggu API key; belum ada hasil scan Dependency-Check.
+- Menegaskan OSV match adalah indikasi awal, bukan bukti exploitability; kontrol 1.10 tetap BELUM DIVERIFIKASI sampai validasi advisory, versi, runtime, dan false positive selesai.
+- Artefak scanner dan eviden mentah tetap lokal; tidak mengunggah JAR proprietary atau data sensitif ke GitHub.
