@@ -168,3 +168,57 @@ Output command diberikan langsung oleh pengguna. Ini adalah hasil pemeriksaan wo
 |---|---|---|
 | 2026-11-16 | STAGE-02-DISTRIBUTION-STATIC-REVIEW | Inventaris 867 JAR; metadata/manifest dan hash; jdeps berhasil; Connector/J 5.1.47 dirujuk SIMRSKhanza.jar; potential finding menunggu validasi. |
 | 2026-11-16 | STAGE-03-SCA-TOOLS-PREPARATION | Kondisi Kali diverifikasi; ketiga tool SCA/SBOM belum terpasang; instalasi dan pemindaian belum dilakukan. |
+
+
+## Update checkpoint — SCA full distribution dan pemetaan OSV — 2026-11-16
+
+### Status pekerjaan Point 1.10
+Pemeriksaan statis dan SCA terhadap paket distribusi lokal SIMRS Khanza telah dilanjutkan. Target lokal: `/run/media/kali/DATA/KhanzaHMSWindows`. Target diperiksa secara read-only; artefak mentah tetap berada di workstation pengguna dan tidak diunggah ke repository.
+
+### Hasil terkonfirmasi dari output pengguna
+- Inventaris awal: **867 file JAR**.
+- Syft menghasilkan SBOM CycloneDX untuk direktori `lib`: **574 paket terindeks**.
+- Syft menghasilkan SBOM CycloneDX full distribution (dengan pengecualian cache JCEF dan direktori manual printer): **2.044 komponen**.
+- OSV Scanner memproses **1.037 paket** dari SBOM full; **77 paket lokal/unscannable** difilter. Warning komponen tanpa CPE/PURL berarti tidak dapat dicocokkan sebagai package oleh OSV, bukan bukti vulnerability.
+- Hasil OSV JSON: **163 rekaman vulnerability pada 44 paket/versi**, dengan **131 CVE unik**.
+- Pemetaan awal hanya berhasil 106/163. Penyebabnya adalah skrip memakai field SBOM `group` yang kosong, padahal identitas Maven tersedia dalam PURL.
+- Skrip pemetaan v2 membaca group/artifact/version dari PURL dan menghasilkan **163/163 rekaman terpetakan**, **0 belum terpetakan**, **44 kombinasi paket/versi**, dan **131 CVE unik**.
+- File register lokal: `evidence/point-1.10/osv/cve-priority-register.csv`; file pemetaan: `evidence/point-1.10/osv/osv-location-mapping-v2.txt`. File-file ini belum dimasukkan ke GitHub karena merupakan output lokal dan belum melalui sanitasi/review.
+- Inventaris aset web di luar JAR setelah mengecualikan cache browser dan manual printer: 9 file HTML/CSS dan tidak ditemukan file JS eksternal pada cakupan tersebut.
+- Inventaris isi arsip JAR: 1.072 entri JS/CSS/HTML; mencakup dokumentasi, contoh, aset runtime, dan duplikasi, sehingga bukan 1.072 library runtime unik.
+- jQuery 3.3.1 dan RequireJS 2.3.6 teridentifikasi pada JAR terpisah; identitas dan SHA-256 salinan telah dibandingkan. Keberadaan aset dalam JAR belum membuktikan pemuatan runtime.
+- Dependency-Check 13.0.0 terpasang, tetapi pembaruan NVD gagal karena API key kosong/tidak tersedia. Pengguna menyatakan API key masih dalam validasi. CISA KEV berhasil diperbarui. Belum ada hasil scan Dependency-Check yang dapat dipakai sebagai cross-check.
+- OSV-Scanner 2.7.1, Syft 1.57.1, dan OSV-Scalibr 0.5.3 terpasang dan versi diverifikasi.
+
+### Penilaian sementara
+- OSV adalah hasil pencocokan otomatis, bukan bukti final bahwa seluruh 163 rekaman dapat dieksploitasi pada SIMRS.
+- Pemetaan 100% berarti setiap rekaman OSV dapat dihubungkan ke lokasi JAR pada SBOM; bukan 100% kerentanan terkonfirmasi.
+- Sejumlah CVE sudah menunjukkan indikasi rentang versi cocok; sejumlah lainnya berpotensi false positive karena versi berada di luar rentang advisory. Contoh awal yang perlu ditandai untuk validasi: Commons IO 1.3.1 terhadap CVE-2021-29425 dan Jackson Databind 2.2.3 terhadap CVE-2026-59889.
+- Kandidat prioritas untuk validasi advisory dan kondisi penggunaan: Jackson Databind 2.2.3, Log4j 1.2.15/1.2.17, Spring Framework, Apache POI, Apache Batik, Commons BeanUtils, Commons Compress, PDFBox, Xalan, Apache Ant, dan Bouncy Castle.
+- Bouncy Castle terdeteksi sebagai versi `154`; perlu konfirmasi metadata JAR untuk memastikan interpretasi versi (kemungkinan 1.54) sebelum menetapkan kecocokan CVE.
+- Log4j 1.x sudah EOL, tetapi prasyarat setiap CVE (mis. SocketServer/appender tertentu) tetap harus diverifikasi; keberadaan class di JAR tidak membuktikan konfigurasi/runtime aktif.
+- Status kontrol 1.10: **BELUM DIVERIFIKASI — hasil SCA menunjukkan indikasi kerentanan; validasi rentang versi, advisory vendor, patch/backport, penggunaan runtime, dan false positive belum selesai.**
+- Keempat belas kontrol lainnya tetap BELUM DIVERIFIKASI; pemeriksaan terfokus 1.10 tidak membuktikan kontrol lain.
+
+### Artefak lokal utama
+- `cyclonedx/simrs-khanza-lib.cdx.json`
+- `cyclonedx/simrs-khanza-full.cdx.json`
+- `osv/osv-full-results.json`
+- `osv/osv-location-mapping-v2.txt`
+- `osv/cve-priority-register.csv`
+- `dependency-check/` (belum ada hasil scan final)
+- `jar-inventory.txt`, `jar-metadata.txt`, `jar-metadata-all.txt`, `jdeps-full-output.txt`, `jar-web-assets-inventory.tsv`
+
+### Langkah berikutnya
+1. Validasi CVE berdasarkan advisory resmi, rentang versi affected/fixed, status patch/backport, dan prasyarat eksploitasi.
+2. Periksa metadata JAR untuk versi yang ambigu, khususnya Bouncy Castle 154.
+3. Verifikasi apakah komponen digunakan oleh aplikasi/runtime dan apakah jalur input/konfigurasi yang relevan aktif; jangan menganggap keberadaan JAR sebagai exploitability.
+4. Setelah NVD API key disetujui, jalankan pembaruan database dan Dependency-Check untuk cross-check.
+5. Buat register final dengan kategori confirmed affected, potential/conditional, false positive/not affected, dan undetermined; catat alasan dan sumber tiap keputusan.
+6. Pertahankan eviden mentah lokal; hanya laporan tersanitasi yang telah direview boleh masuk GitHub.
+
+### Riwayat tambahan
+| Tanggal | Checkpoint | Ringkasan |
+|---|---|---|
+| 2026-11-16 | STAGE-04-FULL-SBOM-OSV | Full SBOM 2.044 komponen; OSV menghasilkan 163 rekaman pada 44 paket/versi, 131 CVE unik. |
+| 2026-11-16 | STAGE-05-OSV-LOCATION-MAPPING | Pemetaan PURL v2 berhasil 163/163; 0 rekaman belum terpetakan. |
