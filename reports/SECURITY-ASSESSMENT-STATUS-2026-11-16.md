@@ -113,3 +113,56 @@ Dokumen ini dapat diserahkan sebagai **laporan status pemeriksaan dan daftar kek
 
 ---
 *Disusun sebagai dokumentasi teknis internal. Kesimpulan final dan pengisian checklist resmi memerlukan review serta persetujuan PIC yang berwenang.*
+
+
+## 4A. Pemeriksaan statis paket distribusi SIMRS — pembaruan 16 November 2026
+
+### Cakupan dan sumber
+Paket distribusi lokal yang diperiksa: `/run/media/kali/DATA/KhanzaHMSWindows`. Paket merupakan distribusi aplikasi, bukan source tree lengkap. Inventaris awal menghasilkan 867 file JAR. Folder target tidak diubah; pemeriksaan dilakukan secara statis.
+
+### Metode yang telah digunakan
+1. Dependency discovery: pencarian dan inventarisasi file JAR.
+2. Metadata/manifest review: ekstraksi metadata JAR dan pemeriksaan Class-Path.
+3. Hashing: SHA-256 untuk membandingkan salinan library.
+4. Static dependency analysis: `jdeps --multi-release base -verbose:class` pada `SIMRSKhanza.jar`.
+5. Library inspection: pemeriksaan isi arsip, kelas tertentu, konfigurasi, dan string bytecode terbatas.
+6. Manual vulnerability triage: identifikasi versi kandidat dan kebutuhan validasi terhadap advisory/CVE.
+
+### Hasil teramati
+- Ditemukan 867 file JAR.
+- `SIMRSKhanza.jar` merujuk melalui manifest ke `lib/mysql-connector-java-5.1.47.jar`; file tersebut tersedia.
+- `jdeps` berhasil dengan exit status 0; output 283.149 baris, 4.383 referensi JDBC, 0 not-found, dan 466 split-package warnings.
+- Referensi langsung yang teramati: `fungsi.koneksiDB -> com.mysql.jdbc.jdbc2.optional.MysqlDataSource`, berasal dari Connector/J 5.1.47.
+- Salinan Connector/J 5.1.47 yang diperiksa memiliki SHA-256 `a98bd1d92dc9007d2b95a9695923d2c7c6f1c3e8bdcf2cfac47ae1aa9b156d75`.
+- Terdapat salinan Connector/J 5.1.39 pada updater; jangan menganggap file ini menggantikan referensi 5.1.47 pada manifest aplikasi utama.
+- Inventaris metadata juga menunjukkan beberapa versi library lama/beragam, termasuk Log4j 1.2.15/1.2.17, Jackson 1.x/2.x, Spring, Apache POI, JasperReports, dan lainnya. Inventaris ini perlu diproses lebih lanjut untuk pemetaan package/version yang dapat dipercaya.
+
+### Penilaian sementara
+Connector/J 5.1.47 adalah **potential finding** yang perlu dicocokkan dengan advisory vendor, OSV/NVD, rentang versi, kondisi konfigurasi, dan patch/backport. Nomor versi saja tidak membuktikan exploitability. Status kontrol 1.10 tetap **BELUM DIVERIFIKASI** sampai validasi selesai dan direview PIC.
+
+### Batasan
+- Source-level white-box review belum dilakukan; source code/build project tidak tersedia pada paket yang diperiksa.
+- Runtime loading belum diverifikasi; saat pemeriksaan proses tidak ditemukan proses Java aktif.
+- Belum dilakukan scan OSV-Scanner, OWASP Dependency-Check, atau pembuatan SBOM CycloneDX.
+- Pemeriksaan Bootstrap/jQuery dan seluruh komponen non-JAR belum lengkap.
+- `jdeps` memeriksa referensi statis; hasilnya bukan bukti seluruh dependency runtime.
+- Kelas/konfigurasi yang tidak ditemukan melalui pencarian terbatas tidak membuktikan tidak adanya penggunaan dinamis.
+
+## 4B. Kesiapan tiga tools — output pengguna 16 November 2026
+
+| Item | Hasil |
+|---|---|
+| OS | Kali GNU/Linux Rolling 2026.2 |
+| Arsitektur | x86_64 |
+| Java | OpenJDK 25.0.5-ea (Debian build) |
+| Memori | 15 GiB total; sekitar 2,2 GiB available saat dicek |
+| Swap | 15 GiB total; sekitar 10 GiB tersedia |
+| Disk root | 452 GB total; 337 GB tersedia |
+| OSV-Scanner | Belum terpasang |
+| OWASP Dependency-Check | Belum terpasang |
+| CycloneDX CLI | Belum terpasang |
+
+Instalasi dan pemindaian ketiga tools belum dilakukan. Tahap berikutnya adalah instalasi terverifikasi, pembuatan SBOM dengan keterbatasan identifikasi dicatat, pemindaian, dan validasi silang.
+
+### Eviden dan penyimpanan
+Inventaris, metadata, hash, dan output jdeps disimpan pada workstation pengguna di direktori evidence lokal. Repository ini hanya menerima dokumentasi dan hasil tersanitasi; jangan unggah JAR proprietary, source code, data pasien, kredensial, atau log sensitif.
