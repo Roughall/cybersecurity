@@ -28,3 +28,11 @@
 - Mencatat pencarian dependency manifest pada repository dokumentasi yang tidak menemukan manifest yang dapat dipindai.
 - Menegaskan kontrol 1.10 belum dapat diverifikasi karena identitas library/versi dan SBOM/source bundle target belum tersedia.
 - Menambahkan laporan status assessment dengan matriks 15 kontrol, eviden yang tersedia, gap, dan kebutuhan tindak lanjut.
+
+
+## 2026-11-16 — Stage 01 Kali Linux baseline
+- Mencatat output baseline Kali GNU/Linux Rolling 2026.2 yang diberikan pengguna.
+- GNU grep 3.12 dan MariaDB client 11.8.6 tersedia; ugrep tidak terpasang.
+- OpenJDK 25.0.5-ea tidak sesuai spesifikasi OpenJDK 17 BellSoft Liberica pada template.
+- Apache Ant tidak ditemukan dan NetBeans tidak ditemukan di PATH.
+- Menegaskan baseline workstation bukan hasil scan dependency dan belum membuktikan kontrol 1.10 PASS/NOT PASS.
