@@ -166,3 +166,47 @@ Instalasi dan pemindaian ketiga tools belum dilakukan. Tahap berikutnya adalah i
 
 ### Eviden dan penyimpanan
 Inventaris, metadata, hash, dan output jdeps disimpan pada workstation pengguna di direktori evidence lokal. Repository ini hanya menerima dokumentasi dan hasil tersanitasi; jangan unggah JAR proprietary, source code, data pasien, kredensial, atau log sensitif.
+
+
+## 4C. Hasil SBOM dan pemindaian SCA full distribution — 16 November 2026
+
+### Cakupan dan metode
+Pemeriksaan dilanjutkan terhadap paket distribusi lokal `/run/media/kali/DATA/KhanzaHMSWindows` secara read-only. Syft 1.57.1 digunakan untuk membuat SBOM CycloneDX full distribution dengan mengecualikan `jcef-cache` dan direktori manual printer. OSV-Scanner 2.7.1 digunakan untuk mencocokkan paket yang dapat diidentifikasi terhadap basis data advisory OSV. Pemetaan lokasi dilakukan dengan membaca group/artifact/version dari PURL Maven pada SBOM karena field `group` komponen Syft kosong.
+
+### Hasil teramati
+- Inventaris awal: 867 file JAR.
+- SBOM direktori `lib`: 574 paket terindeks.
+- SBOM full distribution: 2.044 komponen.
+- OSV memproses 1.037 paket; 77 paket lokal/unscannable difilter.
+- Hasil OSV: 163 rekaman vulnerability pada 44 kombinasi paket/versi; 131 CVE unik.
+- Pemetaan lokasi v2: 163/163 rekaman berhasil dihubungkan ke lokasi JAR; 0 rekaman belum terpetakan.
+- Register CSV lokal: `evidence/point-1.10/osv/cve-priority-register.csv`.
+- Pemetaan lokal: `evidence/point-1.10/osv/osv-location-mapping-v2.txt`.
+- Full SBOM lokal: `evidence/point-1.10/cyclonedx/simrs-khanza-full.cdx.json`.
+- Hasil OSV JSON lokal: `evidence/point-1.10/osv/osv-full-results.json`.
+
+### Batasan interpretasi
+Angka 163 adalah rekaman vulnerability package/version, bukan 163 CVE unik dan bukan 163 temuan yang telah dikonfirmasi exploitable. Angka 131 adalah CVE unik; 44 adalah kombinasi paket/versi. Keberhasilan pemetaan 100% hanya menunjukkan setiap rekaman OSV dapat ditautkan ke lokasi JAR yang tercatat di SBOM.
+
+Peringatan OSV mengenai komponen tanpa CPE/PURL menunjukkan komponen tidak dapat dicocokkan sebagai paket; peringatan tersebut bukan temuan vulnerability. OSV memfilter 77 paket lokal/unscannable, sehingga cakupan pencocokan paket tidak sama dengan seluruh 2.044 komponen SBOM.
+
+### Pemeriksaan tambahan aset web
+- Di luar JAR, setelah mengecualikan cache JCEF dan manual printer, inventaris menyisakan 9 file HTML/CSS dan tidak menemukan file JavaScript eksternal pada cakupan pencarian tersebut.
+- Di dalam JAR ditemukan 1.072 entri JS/CSS/HTML. Entri mencakup dokumentasi, contoh, aset runtime, dan duplikasi; jumlah ini bukan jumlah library unik atau bukti seluruh aset dimuat saat runtime.
+- jQuery 3.3.1 dan RequireJS 2.3.6 ditemukan di JAR tersendiri. Identitas versi dan SHA-256 salinan telah diperiksa. Keberadaan arsip belum membuktikan pemakaian runtime.
+
+### Triage awal dan batasan
+Sejumlah komponen lama memerlukan prioritas validasi, antara lain Jackson Databind 2.2.3, Log4j 1.2.15/1.2.17, Spring Framework, Apache POI, Apache Batik, Commons BeanUtils, Commons Compress, PDFBox, Xalan, Ant, dan Bouncy Castle. Beberapa pasangan CVE/versi menunjukkan indikasi rentang terdampak; beberapa lainnya berpotensi false positive. Contoh yang perlu diverifikasi lebih lanjut adalah Commons IO 1.3.1 terhadap CVE-2021-29425 dan Jackson Databind 2.2.3 terhadap CVE-2026-59889. Bouncy Castle versi OSV `154` perlu dikonfirmasi melalui metadata JAR.
+
+OWASP Dependency-Check 13.0.0 telah terpasang, tetapi pembaruan NVD gagal karena API key belum tersedia/masih dalam validasi. CISA KEV berhasil diperbarui. Belum ada hasil scan Dependency-Check sehingga cross-check belum dilakukan.
+
+### Kesimpulan kontrol 1.10
+**BELUM DIVERIFIKASI.** Hasil SCA menunjukkan indikasi penggunaan library dengan versi yang mungkin terdampak. Namun, belum seluruh CVE diverifikasi terhadap rentang versi affected/fixed, advisory vendor, patch/backport, prasyarat eksploitasi, konfigurasi, dan penggunaan runtime. Hasil OSV tidak boleh diperlakukan sebagai bukti exploitability. Pemeriksaan source-level dan runtime juga belum lengkap. Keputusan PASS/NOT PASS final harus menunggu validasi dan review PIC berwenang.
+
+### Tindak lanjut
+1. Validasi tiap CVE/package/version terhadap advisory resmi dan affected/fixed version range.
+2. Periksa prasyarat eksploitasi, konfigurasi, penggunaan runtime, serta patch/backport.
+3. Konfirmasi versi Bouncy Castle 154 melalui metadata JAR.
+4. Jalankan Dependency-Check setelah NVD API key valid sebagai cross-check.
+5. Susun register final dengan kategori confirmed affected, potential/conditional, false positive/not affected, dan undetermined.
+6. Simpan scanner output mentah secara lokal; hanya laporan tersanitasi yang direview boleh disimpan di repository.
