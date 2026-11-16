@@ -3,7 +3,7 @@
 Tanggal: 2026-11-16  
 Repository: `Roughall/cybersecurity` · Branch: `main`  
 Workstation pengguna: Kali GNU/Linux Rolling 2026.2 (output pengguna, 2026-11-16)  
-Status: **Persiapan dokumentasi — audit teknis belum dimulai**
+Status: **Assessment teknis terfokus Point 1.10 sedang berjalan; hasil scanner SCA belum tersedia**
 
 ## Fakta terkonfirmasi
 - Repository ini disiapkan sebagai tempat dokumentasi hasil security assessment, bukan source code SIMRS.
@@ -121,3 +121,50 @@ Output command diberikan langsung oleh pengguna. Ini adalah hasil pemeriksaan wo
 | Tanggal | Checkpoint | Ringkasan |
 |---|---|---|
 | 2026-11-16 | STAGE-01-KALI-BASELINE | Kali 2026.2 teridentifikasi; GNU grep dan MariaDB client tersedia; Java tidak sesuai spesifikasi, Ant/NetBeans belum tersedia. |
+
+
+## Update checkpoint — hasil pemeriksaan paket distribusi SIMRS dan persiapan SCA — 2026-11-16
+
+### Perubahan status dan koreksi cakupan
+- Pemeriksaan teknis Point 1.10 telah berlanjut dari review repository dokumentasi ke pemeriksaan statis paket distribusi SIMRS yang tersedia secara lokal di workstation pengguna.
+- Lokasi paket yang diperiksa: `/run/media/kali/DATA/KhanzaHMSWindows`. Paket tersebut merupakan distribusi aplikasi, bukan source tree/build project lengkap.
+- Inventaris awal menemukan **867 file JAR**. Hasil ini adalah jumlah file JAR pada folder distribusi saat inventaris dibuat; bukan jumlah dependency unik atau jumlah komponen yang sudah terverifikasi.
+- Tidak ditemukan `build.xml`, `pom.xml`, `ivy.xml`, `manifest.mf` pada tingkat project, atau `gradle.properties` dalam pemeriksaan awal. Karena itu, source-level white-box review dan rekonstruksi dependency build belum dilakukan.
+- Pernyataan di bagian sebelumnya bahwa belum ada artefak dependency pada repository dokumentasi tetap benar untuk repository GitHub, tetapi tidak lagi menggambarkan seluruh bahan yang tersedia: paket distribusi lokal kemudian diperiksa secara terpisah.
+
+### Hasil pemeriksaan statis yang telah dilakukan
+1. **Dependency discovery/inventory:** 867 JAR terdaftar dalam `jar-inventory.txt`.
+2. **Metadata dan manifest:** metadata manifest dikumpulkan ke `jar-metadata.txt` dan `jar-metadata-all.txt`. Ditemukan beberapa versi library lama/beragam, termasuk Log4j 1.2.15/1.2.17, Jackson 1.9.0 dan 2.1.x/2.2.3, Spring Core 2.5.5/5.1.4, Spring Web 3.1.0.M2/3.2.1, Apache POI 3.0.2-beta1/3.2/3.7/3.9/4.1.0, JasperReports 3.7.0/5.1.2/6.8.0/6.20.0, serta MySQL Connector/J 5.1.39/5.1.47.
+3. **Hash dan duplikasi:** salinan Connector/J 5.1.47 pada beberapa direktori memiliki SHA-256 yang sama: `a98bd1d92dc9007d2b95a9695923d2c7c6f1c3e8bdcf2cfac47ae1aa9b156d75`. Salinan updater Connector/J 5.1.39 memiliki SHA-256 `75adfb38992d3c0cf119bff7123fdb05019d376ec31e4375676d4df3b9ec0d28`.
+4. **Manifest aplikasi:** `SIMRSKhanza.jar` merujuk ke `lib/mysql-connector-java-5.1.47.jar` melalui Class-Path; file tersebut tersedia pada lokasi yang dirujuk.
+5. **Static dependency analysis:** perintah `jdeps --multi-release base -verbose:class --class-path "$TARGET/lib/*" "$TARGET/SIMRSKhanza.jar"` berhasil (exit status 0). Output berisi 283.149 baris; terhitung 4.383 referensi JDBC, 0 kelas not-found, dan 466 split-package warnings. Salah satu referensi langsung yang teramati: `fungsi.koneksiDB -> com.mysql.jdbc.jdbc2.optional.MysqlDataSource`, dipetakan ke Connector/J 5.1.47.
+6. **Log4j inspection:** kelas `SocketServer.class` ada pada salinan Log4j 1.2.15/1.2.17. Pencarian konfigurasi/literal yang telah dilakukan tidak menemukan referensi eksplisit ke SocketServer; ini bukan bukti bahwa seluruh jalur penggunaan atau risiko Log4j tidak ada.
+7. **Runtime:** pemeriksaan proses Java saat itu tidak menemukan proses Java aktif. Oleh karena itu, pemuatan library saat runtime belum dibuktikan.
+
+### Penilaian sementara Point 1.10
+- Terdapat **potential finding** pada penggunaan MySQL Connector/J 5.1.47. Versi dan referensi statisnya teridentifikasi, tetapi kecocokan advisory/CVE, kondisi konfigurasi, exploitability, patch/backport, dan konteks runtime masih harus divalidasi.
+- Rentang versi CVE yang hanya berdasarkan nomor versi tidak cukup untuk menyatakan aplikasi exploitable. Jangan menetapkan PASS atau NOT PASS final hanya dari hasil ini.
+- Status kontrol 1.10 untuk saat ini: **BELUM DIVERIFIKASI — terdapat potential finding yang menunggu validasi CVE/advisory dan cross-check scanner**.
+- Source-code review, verifikasi dependency runtime, pemeriksaan Bootstrap/jQuery, dan pemeriksaan komponen non-JAR belum lengkap.
+
+### Workstation dan kesiapan tools — output pengguna 2026-11-16
+- Kali GNU/Linux Rolling 2026.2, x86_64.
+- OpenJDK 25.0.5-ea (Debian build); `jdeps` 25.0.5-ea.
+- Memori: total 15 GiB, available sekitar 2,2 GiB; swap 15 GiB, tersedia sekitar 10 GiB.
+- Filesystem root: 452 GB total, 337 GB tersedia (22% terpakai).
+- OSV-Scanner, OWASP Dependency-Check, dan CycloneDX CLI **belum terpasang** pada saat pemeriksaan kesiapan.
+- Target tetap read-only. Tools dan hasil pemeriksaan ditempatkan di direktori kerja/evidence terpisah di home pengguna.
+
+### Tahap berikutnya — belum dijalankan
+1. Siapkan dan verifikasi instalasi OSV-Scanner V2.
+2. Siapkan dan verifikasi OWASP Dependency-Check serta pembaruan database NVD.
+3. Tentukan cara menghasilkan SBOM CycloneDX dari JAR/metadata paket; tandai komponen yang tidak dapat diidentifikasi, jangan mengklaim SBOM lengkap tanpa validasi.
+4. Jalankan scan terhadap salinan/target read-only, simpan laporan HTML/JSON, SBOM, log, versi dan hash tool.
+5. Cross-check hasil OSV dan Dependency-Check; validasi manual temuan berdasarkan komponen, versi, hash, rentang versi terdampak, advisory vendor, konfigurasi, dan kemungkinan false positive.
+6. Simpan eviden mentah secara lokal pada media yang disetujui institusi; hanya unggah laporan tersanitasi ke GitHub. Jangan unggah JAR proprietary, source code, kredensial, data pasien, atau log sensitif.
+
+### Riwayat tambahan
+| Tanggal | Checkpoint | Ringkasan |
+|---|---|---|
+| 2026-11-16 | STAGE-02-DISTRIBUTION-STATIC-REVIEW | Inventaris 867 JAR; metadata/manifest dan hash; jdeps berhasil; Connector/J 5.1.47 dirujuk SIMRSKhanza.jar; potential finding menunggu validasi. |
+| 2026-11-16 | STAGE-03-SCA-TOOLS-PREPARATION | Kondisi Kali diverifikasi; ketiga tool SCA/SBOM belum terpasang; instalasi dan pemindaian belum dilakukan. |
