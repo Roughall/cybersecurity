@@ -2,7 +2,7 @@
 
 Tanggal: 2026-11-16  
 Repository: `Roughall/cybersecurity` · Branch: `main`  
-Workstation pengguna: Kali Linux (versi belum dicatat)  
+Workstation pengguna: Kali GNU/Linux Rolling 2026.2 (output pengguna, 2026-11-16)  
 Status: **Persiapan dokumentasi — audit teknis belum dimulai**
 
 ## Fakta terkonfirmasi
@@ -35,7 +35,7 @@ Status: **Persiapan dokumentasi — audit teknis belum dimulai**
 - Jangan menganggap Drive sebagai lokasi penyimpanan yang telah disetujui institusi sebelum pemilik data/penanggung jawab mengonfirmasi kebijakan penyimpanannya.
 
 ## Belum dikonfirmasi
-Versi Kali/kernel/arsitektur; identitas dan versi target; arsitektur dan framework; lingkungan dan alamat target; izin tertulis dan rules of engagement; akses source code; akun uji/role; OS server, database, antivirus/EDR, firewall, TLS, webserver; jadwal dan kontak penanggung jawab. Jangan mengisi hal-hal ini dengan asumsi.
+Versi kernel/arsitektur; identitas dan versi target; arsitektur dan framework; lingkungan dan alamat target; izin tertulis dan rules of engagement; akses source code; akun uji/role; OS server, database, antivirus/EDR, firewall, TLS, webserver; jadwal dan kontak penanggung jawab. Jangan mengisi hal-hal ini dengan asumsi.
 
 ## Keputusan ruang lingkup assessment — 2026-11-16
 - Pemeriksaan teknis terfokus sesuai arahan pengguna pada kontrol **1.10 (library vulnerable)**, yaitu bagian yang diberi instruksi eviden berwarna merah pada template.
@@ -88,3 +88,36 @@ Analisis repository dokumentasi tidak membuktikan keamanan aplikasi/server. Sour
 |---|---|---|
 | 2026-11-16 | INITIAL-BASELINE | Dokumentasi diinisialisasi; audit teknis belum dimulai. |
 | 2026-11-16 | Workflow decision | Assessment diprioritaskan untuk tenggat hari ini; Diagnostic Collector direncanakan sebagai modul pendukung dalam repository yang sama dan implementasi penuh ditunda. |
+
+
+## Hasil Tahap 1 — Baseline Kali Linux — 2026-11-16
+Output command diberikan langsung oleh pengguna. Ini adalah hasil pemeriksaan workstation, bukan hasil scan dependency aplikasi.
+
+| Komponen | Hasil aktual | Evaluasi terhadap template |
+|---|---|---|
+| OS | Kali GNU/Linux Rolling 2026.2 | Tercatat |
+| GNU grep | 3.12 | Tersedia; dapat digunakan |
+| ugrep | Tidak terpasang | Bukan blocker karena template menyebut grep/ugrep |
+| Java | OpenJDK 25.0.5-ea (Debian build) | Tidak sesuai dengan OpenJDK 17 BellSoft Liberica yang ditentukan |
+| Apache Ant | Tidak ditemukan | Belum tersedia |
+| Apache NetBeans | Tidak ditemukan di PATH | Belum terverifikasi/tersedia |
+| MariaDB client | 11.8.6-MariaDB, client 15.2 | Client tersedia; bukan bukti versi server database |
+
+### Eviden
+- Output terminal yang disampaikan pengguna pada 2026-11-16, pukul 10:32:06 WIB.
+- Belum ada file screenshot atau log mentah yang diunggah ke repository. Simpan screenshot asli pada penyimpanan eviden yang disetujui; unggah hanya salinan tersanitasi.
+- Baseline ini belum membuktikan library aplikasi bebas CVE.
+
+### Langkah berikutnya
+1. Jangan mengganti Java global atau memasang tool secara membabi buta.
+2. Dapatkan path source code/build JAKSIMRS/KHANZA versi 17.002.20261026002 pada lingkungan pengembangan yang diizinkan.
+3. Identifikasi library/JAR dan versi aktual dari source/build aplikasi.
+4. Gunakan GNU grep/ugrep untuk penelusuran manual sesuai template.
+5. Cocokkan setiap library dan versi dengan NVD/CVE serta advisory vendor; dokumentasikan URL dan status relevansinya.
+6. Siapkan OpenJDK 17 BellSoft Liberica, Apache Ant, dan NetBeans bila diperlukan untuk build/review sesuai lingkungan yang disepakati. Hindari mengubah Java default workstation tanpa kebutuhan.
+7. Verifikasi versi server MariaDB hanya jika akses yang sah dan kebutuhan pemeriksaan telah dikonfirmasi.
+
+## Riwayat tambahan
+| Tanggal | Checkpoint | Ringkasan |
+|---|---|---|
+| 2026-11-16 | STAGE-01-KALI-BASELINE | Kali 2026.2 teridentifikasi; GNU grep dan MariaDB client tersedia; Java tidak sesuai spesifikasi, Ant/NetBeans belum tersedia. |
