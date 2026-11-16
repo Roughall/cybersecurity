@@ -22,6 +22,18 @@ Status: **Persiapan dokumentasi — audit teknis belum dimulai**
 - Repository menjadi sumber dokumentasi bersama bagi AI agent yang diberi akses. Setiap agent wajib membaca checkpoint dan handoff terbaru sebelum bekerja. Akses repository tidak berarti akses ke workstation atau sistem target.
 - Perubahan file harus dikoordinasikan agar tidak terjadi penulisan bersamaan; gunakan satu agent sebagai penulis untuk file yang sama pada satu waktu.
 
+
+## Keputusan penyimpanan eviden dan akses AI — 2026-11-16
+- Google Drive ditetapkan sebagai **rancangan pusat penyimpanan eviden** untuk screenshot, pesan error, log diagnostik, dan berkas pendukung assessment, terpisah dari repository GitHub.
+- GitHub tetap menjadi pusat dokumentasi proyek: checkpoint, handoff, scope, metodologi, status kontrol, temuan yang telah ditinjau, dan laporan akhir. Bila diperlukan, dokumentasi GitHub hanya memuat referensi/tautan ke eviden Drive yang aksesnya dibatasi.
+- Struktur folder Drive yang diusulkan: `00-ADMIN/`, `01-FRONTEND/`, `02-BACKEND/`, `03-DIAGNOSTICS/`, `04-AI-REVIEW/`, dan `05-FINAL-REPORT/`. Struktur ini masih berupa rancangan; belum dibuat atau diverifikasi.
+- Alur yang direncanakan: Kali Linux menghasilkan screenshot/output → pemeriksaan dan sanitasi → unggah ke folder Drive yang disetujui institusi → AI yang memiliki konektor/akses sah meninjau file terpilih → hasil review dan status kontrol dicatat di GitHub.
+- GitHub tidak otomatis meneruskan atau mengarahkan AI untuk membaca Google Drive. ChatGPT, Claude, dan AI lain harus memiliki koneksi/integrasi Drive masing-masing atau mekanisme akses yang disetujui. Link Drive saja tidak menjamin file dapat dibaca.
+- Jenis akun Drive (pribadi atau Google Workspace RSUD), kebijakan institusi, koneksi Drive pada masing-masing AI, izin folder, dan mekanisme otomasi belum dikonfirmasi.
+- Belum ada folder Drive dibuat, file eviden diunggah, konektor AI diuji, atau otomasi sinkronisasi diimplementasikan.
+- Data mentah/sensitif tetap disimpan pada media yang disetujui institusi. Sebelum berbagi ke Drive atau AI, periksa dan samarkan data pasien, kredensial, token, cookie/session, alamat/hostname internal, serta informasi infrastruktur yang tidak diperlukan. Hindari akses publik/“Anyone with the link”; terapkan akses minimum sesuai kewenangan.
+- Jangan menganggap Drive sebagai lokasi penyimpanan yang telah disetujui institusi sebelum pemilik data/penanggung jawab mengonfirmasi kebijakan penyimpanannya.
+
 ## Belum dikonfirmasi
 Versi Kali/kernel/arsitektur; identitas dan versi target; arsitektur dan framework; lingkungan dan alamat target; izin tertulis dan rules of engagement; akses source code; akun uji/role; OS server, database, antivirus/EDR, firewall, TLS, webserver; jadwal dan kontak penanggung jawab. Jangan mengisi hal-hal ini dengan asumsi.
 
