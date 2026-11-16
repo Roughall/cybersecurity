@@ -37,8 +37,16 @@ Status: **Persiapan dokumentasi — audit teknis belum dimulai**
 ## Belum dikonfirmasi
 Versi Kali/kernel/arsitektur; identitas dan versi target; arsitektur dan framework; lingkungan dan alamat target; izin tertulis dan rules of engagement; akses source code; akun uji/role; OS server, database, antivirus/EDR, firewall, TLS, webserver; jadwal dan kontak penanggung jawab. Jangan mengisi hal-hal ini dengan asumsi.
 
-## Matriks status awal
-Seluruh kontrol berstatus **BELUM DIVERIFIKASI**. Ini bukan pernyataan aman atau rentan.
+## Keputusan ruang lingkup assessment — 2026-11-16
+- Pemeriksaan teknis terfokus sesuai arahan pengguna pada kontrol **1.10 (library vulnerable)**, yaitu bagian yang diberi instruksi eviden berwarna merah pada template.
+- Pengumpulan/rekap eviden tetap dicatat untuk seluruh 15 kontrol agar laporan lengkap. Kontrol selain 1.10 tidak menjalani pengujian teknis dalam pekerjaan terfokus ini; statusnya tidak boleh dianggap PASS.
+- Pemeriksaan 1.10 menggunakan repository dokumentasi `Roughall/cybersecurity`. Repository ini bukan source code aplikasi SIMRS dan saat ini tidak menyediakan manifest dependency atau SBOM yang dapat dipindai.
+- Pencarian repository untuk `package.json`, `pom.xml`, `build.gradle`, `composer.json`, `requirements.txt`, `go.mod`, dan `Cargo.toml` tidak menghasilkan file yang cocok. Ini hanya menyatakan manifest tersebut tidak ditemukan melalui pencarian repository yang dilakukan; bukan bukti bahwa aplikasi tidak memakai library.
+- Karena identitas dependency dan versinya tidak tersedia, pencocokan CVE/NVD belum dapat dilakukan secara valid. Kontrol 1.10 tetap **BELUM DIVERIFIKASI**.
+- Laporan status dan matriks bukti dibuat di `reports/SECURITY-ASSESSMENT-STATUS-2026-11-16.md`.
+
+## Matriks status assessment
+Status seluruh 15 kontrol dicatat dalam laporan. Semua tetap **BELUM DIVERIFIKASI** karena repository dokumentasi tidak memuat bukti teknis aplikasi/server. Kontrol 1.10 telah diperiksa dari sisi ketersediaan artefak dependency, tetapi belum dapat diverifikasi dari sisi keamanan library.
 
 | ID | Kontrol | Status |
 |---|---|---|
