@@ -3,7 +3,7 @@
 **Tanggal:** 16 November 2026  
 **Acuan:** SPPTI-SEC-FORM-001 versi 1.1  
 **Repository dokumentasi:** `Roughall/cybersecurity`  
-**Workstation yang dinyatakan:** Kali Linux (versi belum diverifikasi)  
+**Workstation:** Kali GNU/Linux Rolling 2026.2 (output baseline dari pengguna, 16 November 2026)  
 **Jenis dokumen:** Laporan status assessment dan gap eviden — bukan sertifikasi keamanan atau hasil PASS final.
 
 ## 1. Ringkasan eksekutif
@@ -41,6 +41,22 @@ Repository yang diperiksa merupakan repository dokumentasi assessment, bukan sou
 | 2.3 | TLS minimal 1.2 | Tidak ada konfigurasi atau hasil uji TLS endpoint | BELUM DIVERIFIKASI |
 | 2.4 | Keamanan versi webserver | Tidak ada identitas versi/build webserver | BELUM DIVERIFIKASI |
 | 2.5 | Keamanan framework/bahasa pemrograman | Tidak ada inventaris runtime/framework dan versi target | BELUM DIVERIFIKASI |
+
+## 3A. Baseline workstation (Tahap 1)
+
+Output terminal yang diberikan pengguna pada 16 November 2026 pukul 10:32:06 WIB:
+
+| Komponen | Hasil | Penilaian |
+|---|---|---|
+| OS | Kali GNU/Linux Rolling 2026.2 | Teridentifikasi |
+| GNU grep | 3.12 | Tersedia |
+| ugrep | Tidak terpasang | Opsional karena grep tersedia |
+| Java | OpenJDK 25.0.5-ea (Debian build) | Tidak sesuai OpenJDK 17 BellSoft Liberica pada template |
+| Apache Ant | Tidak ditemukan | Belum tersedia |
+| Apache NetBeans | Tidak ditemukan di PATH | Belum terverifikasi |
+| MariaDB client | 11.8.6-MariaDB, client 15.2 | Client tersedia; versi server belum diketahui |
+
+Baseline workstation bukan hasil scan library aplikasi. Belum ada perubahan konfigurasi atau instalasi tool yang dilakukan. Screenshot/log mentah harus disimpan pada penyimpanan eviden yang disetujui dan disanitasi sebelum dibagikan.
 
 ## 4. Pemeriksaan khusus kontrol 1.10
 
@@ -83,7 +99,7 @@ Jangan mengirim data pasien, kredensial, token, private key, cookie/session, dum
 ## 6. Pernyataan keterbatasan
 
 - Review ini terbatas pada repository dokumentasi yang tersedia.
-- Kali Linux disebut sebagai workstation, tetapi versi OS, kernel, arsitektur, dan inventaris tools belum diberikan sebagai output eviden.
+- Baseline OS dan sebagian tools workstation telah diberikan: Kali GNU/Linux Rolling 2026.2, GNU grep 3.12, OpenJDK 25.0.5-ea, MariaDB client 11.8.6. ugrep tidak terpasang, Apache Ant tidak ditemukan, dan NetBeans tidak ditemukan di PATH. Kernel dan arsitektur belum diberikan.
 - Tidak ada akses atau bukti langsung dari aplikasi dan server produksi yang ditinjau.
 - Pencarian manifest yang tidak menghasilkan temuan tidak membuktikan ketiadaan dependency.
 - Tidak ada pengujian dinamis atau pemindaian jaringan dilakukan.
